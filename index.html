@@ -31,7 +31,7 @@
       background: #1a1a1a;
       padding: 25px;
       border-radius: 10px;
-      width: 300px;
+      width: 350px;
       display: none;
       box-shadow: 0 0 20px rgba(0,0,0,0.5);
     }
@@ -45,8 +45,33 @@
       margin-bottom: 15px;
     }
 
-    #closeBtn {
-      background: #e11d48;
+    #results {
+      margin-top: 20px;
+      text-align: left;
+      background: #222;
+      padding: 15px;
+      border-radius: 8px;
+      display: none;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .result-item {
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #333;
+    }
+
+    .result-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #3b82f6;
+    }
+
+    .result-text {
+      font-size: 14px;
+      color: #ccc;
     }
   </style>
 </head>
@@ -58,8 +83,10 @@
   <div id="popup">
     <input id="searchBox" type="text" placeholder="Search here...">
     <button onclick="runSearch()">Search</button>
-    <button id="closeBtn" onclick="closePopup()">Close</button>
+    <button onclick="closePopup()" style="background:#e11d48;margin-top:10px;">Close</button>
   </div>
+
+  <div id="results"></div>
 
   <script>
     function openPopup() {
@@ -70,14 +97,34 @@
       document.getElementById("popup").style.display = "none";
     }
 
-    function runSearch() {
+    async function runSearch() {
       const query = document.getElementById("searchBox").value.trim();
       if (!query) return;
 
-      // Change this to use a different engine if you want
-      const engine = "https://www.google.com/search?q=";
+      const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&pretty=1`;
 
-      window.open(engine + encodeURIComponent(query), "_blank");
+      const response = await fetch(url);
+      const data = await response.json();
+
+      const resultsBox = document.getElementById("results");
+      resultsBox.innerHTML = "";
+      resultsBox.style.display = "block";
+
+      if (data.RelatedTopics.length === 0) {
+        resultsBox.innerHTML = "<p>No results found.</p>";
+        return;
+      }
+
+      data.RelatedTopics.slice(0, 5).forEach(item => {
+        if (item.Text) {
+          resultsBox.innerHTML += `
+            <div class="result-item">
+              <div class="result-title">${item.Text.split(" - ")[0]}</div>
+              <div class="result-text">${item.Text}</div>
+            </div>
+          `;
+        }
+      });
     }
   </script>
 
