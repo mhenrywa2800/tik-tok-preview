@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Popup Search Engine</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 80px;
+    }
+
+    button {
+      padding: 12px 20px;
+      background: #3b82f6;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #1a1a1a;
+      padding: 25px;
+      border-radius: 10px;
+      width: 300px;
+      display: none;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    #popup input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      margin-bottom: 15px;
+    }
+
+    #closeBtn {
+      background: #e11d48;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Popup Search Engine</h1>
+  <button onclick="openPopup()">Open Search</button>
+
+  <div id="popup">
+    <input id="searchBox" type="text" placeholder="Search here...">
+    <button onclick="runSearch()">Search</button>
+    <button id="closeBtn" onclick="closePopup()">Close</button>
+  </div>
+
+  <script>
+    function openPopup() {
+      document.getElementById("popup").style.display = "block";
+    }
+
+    function closePopup() {
+      document.getElementById("popup").style.display = "none";
+    }
+
+    function runSearch() {
+      const query = document.getElementById("searchBox").value.trim();
+      if (!query) return;
+
+      // Change this to use a different engine if you want
+      const engine = "https://www.google.com/search?q=";
+
+      window.open(engine + encodeURIComponent(query), "_blank");
+    }
+  </script>
+
+</body>
+</html>
