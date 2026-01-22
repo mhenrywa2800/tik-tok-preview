@@ -45,33 +45,12 @@
       margin-bottom: 15px;
     }
 
-    #results {
-      margin-top: 20px;
-      text-align: left;
-      background: #222;
-      padding: 15px;
-      border-radius: 8px;
+    #resultsFrame {
+      width: 90%;
+      height: 600px;
+      border: none;
+      margin-top: 30px;
       display: none;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .result-item {
-      margin-bottom: 12px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #333;
-    }
-
-    .result-title {
-      font-size: 18px;
-      font-weight: bold;
-      color: #3b82f6;
-    }
-
-    .result-text {
-      font-size: 14px;
-      color: #ccc;
     }
   </style>
 </head>
@@ -86,7 +65,7 @@
     <button onclick="closePopup()" style="background:#e11d48;margin-top:10px;">Close</button>
   </div>
 
-  <div id="results"></div>
+  <iframe id="resultsFrame"></iframe>
 
   <script>
     function openPopup() {
@@ -97,34 +76,18 @@
       document.getElementById("popup").style.display = "none";
     }
 
-    async function runSearch() {
+    function runSearch() {
       const query = document.getElementById("searchBox").value.trim();
       if (!query) return;
 
-      const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&pretty=1`;
+      // DuckDuckGo allows embedding
+      const searchURL = "https://duckduckgo.com/?q=" + encodeURIComponent(query);
 
-      const response = await fetch(url);
-      const data = await response.json();
+      const frame = document.getElementById("resultsFrame");
+      frame.src = searchURL;
+      frame.style.display = "block";
 
-      const resultsBox = document.getElementById("results");
-      resultsBox.innerHTML = "";
-      resultsBox.style.display = "block";
-
-      if (data.RelatedTopics.length === 0) {
-        resultsBox.innerHTML = "<p>No results found.</p>";
-        return;
-      }
-
-      data.RelatedTopics.slice(0, 5).forEach(item => {
-        if (item.Text) {
-          resultsBox.innerHTML += `
-            <div class="result-item">
-              <div class="result-title">${item.Text.split(" - ")[0]}</div>
-              <div class="result-text">${item.Text}</div>
-            </div>
-          `;
-        }
-      });
+      closePopup();
     }
   </script>
 
